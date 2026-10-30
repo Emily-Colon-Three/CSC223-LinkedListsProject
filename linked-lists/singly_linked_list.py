@@ -7,7 +7,20 @@ manipulate or observe attributes of the list:
 Firstly, append() and prepend() take data as the argument, then create a new node and add
 it either to the back (append) or front (prepend) of the list, becoming the new tail or
 head, respectively. They have logic for being used on an empty list, making the added node
-become both head and tail. 1 is added to the count after either case."""
+become both head and tail. 1 is added to the count after either case.
+Then, insert_after() takes a value to look for and a value to add as a new node, finding
+the former value and inserting a node of the new value between it and the previous
+subsequent node. It will raise ValueError if the list is empty or lacks the target. Count
+is increased by one with successful insertion.
+Then, remove() finds and removes a node from the list. It changes references so that the
+node is no longer referenced in the SinglyLinkedList, whether it be head, tail, or interior.
+It raises an error for empty lists and lists without the specified value.
+Then, contains() returns True or False depending on whether a SinglyLinkedList object has
+a node of the specified value. is_empty() method works similarly, simply returning True for
+an empty list and False if there is any node at all present. len() is also made compatible
+with SinglyLinkedList, returning _count as list length."""
+from xml.etree.ElementInclude import include
+
 from node import Node
 
 class SinglyLinkedList:
@@ -21,7 +34,7 @@ class SinglyLinkedList:
     # of an empty or non-empty list.
     def append(self, data):
         new = Node(data)
-        if self._head is None: # In the case of an empty list
+        if self.is_empty(): # In the case of an empty list
             self._head = new
             self._tail = new
         else:
@@ -48,7 +61,7 @@ class SinglyLinkedList:
     # becomes new tail. ValueError raised if target not found or if list is empty.
     def insert_after(self, existing_data, new_data):
         # List is first ensured to not be empty
-        if self._head is None:
+        if self.is_empty():
             raise ValueError("SinglyLinkedList is empty.")
 
         current = self._head # Creates cursor variable which starts at list head.
@@ -74,7 +87,7 @@ class SinglyLinkedList:
     # Contains case handling for if the node is the head, the tail, or an interior node.
     # Additionally, can handle an error of the list being either empty or lacking target.
     def remove(self, data):
-        if self._head is None:
+        if self.is_empty():
             raise ValueError("SinglyLinkedList is empty.")
 
         # Checks first if head has target data; removes head if so.
@@ -107,3 +120,77 @@ class SinglyLinkedList:
         else: # Node to be removed is an interior node
             current.next = current.next.next
             self._count -= 1
+
+    # Method which returns True or False, telling whether SinglyLinkedList contains
+    # a specified value in any of its nodes. No errors should be raised; the value is either
+    # in the list, or it isn't.
+    def contains(self, data) -> bool:
+        if self.is_empty():
+            return False # Empty lists do not contain any value at all
+
+        # Quickly checks if the head contains target value. If yes, the value is found.
+        if self._head.data == data:
+            return True
+
+        current = self._head
+
+        while current.data != data:
+            if current == self._tail: # If current isn't the target, and is tail, target isn't present.
+                return False
+
+            current = current.next
+
+        if current.data == data: # Loop has ended, and current is validated as target.
+            return True
+
+    # Simple function, True if list is empty, False if it contains any nodes at all.
+    def is_empty(self) -> bool:
+        if self._head is None:
+            return True
+        else:
+            return False
+
+    # Dunder method that allows len() to return the length of SinglyLinkedList, count.
+    def __len__(self):
+        return self._count
+
+    def __iter__(self):
+        if self._head is None:
+            raise StopIteration
+
+        self.index = 0
+        return self
+
+    def __next__(self):
+        if (self.index) < len(self):
+            current = self._head
+            for i in range(self.index):
+                current = current.next
+
+            self.index += 1
+            return current
+        else:
+            raise StopIteration
+
+    # Function to let SinglyLinkedList be convertible into string output.
+    def __str__(self):
+        if self._head is None:
+            return "Head -> None"
+
+        string = "Head -> "
+
+        for node in self:
+            string += f"{node.data} -> "
+        string += "None"
+
+        return string
+
+    # Function which fills empty SinglyLinkedList with elements from a Python list.
+    def build_list_forward(self, list):
+        for i in list:
+            self.append(list[i - 1])
+
+    # Function which fills empty SinglyLinkedList with Python List in reverse order.
+    def build_list_backward(self, list):
+        for i in list:
+            self.append(list[-i])

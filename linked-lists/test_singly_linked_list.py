@@ -132,3 +132,94 @@ class RemovingNodes(unittest.TestCase):
 
         with self.assertRaises(ValueError): # Removing non-present value
             self.list1.remove(6)
+
+# Tests contains() method, both in cases where value is present and ones where it is
+# absent from a list. Checks that True or False is returned accordingly.
+class ContainsInList(unittest.TestCase):
+    def setUp(self):
+        self.list1 = SinglyLinkedList()
+        self.list1.append(1)
+        self.list1.append(2)
+        self.list1.append(4)
+        self.list1.append(8)
+
+        self.list2 = SinglyLinkedList() # empty list
+
+    def test_present(self):
+        self.assertTrue(self.list1.contains(1))
+        self.assertTrue(self.list1.contains(2))
+        self.assertTrue(self.list1.contains(4))
+        self.assertTrue(self.list1.contains(8))
+
+    def test_absent(self):
+        self.assertFalse(self.list1.contains(0))
+        self.assertFalse(self.list2.contains(1)) # List 2 is empty, can't contain 1.
+
+# Tests that is_empty() method returns True for empty lists, and False for non-empty.
+class ListEmptiness(unittest.TestCase):
+    def setUp(self):
+        self.list1 = SinglyLinkedList() # List with 1 node, head is also tail.
+        self.list1.append(1)
+
+        self.list2 = SinglyLinkedList() # List with 3 nodes, head and tail different.
+        self.list2.append(2)
+        self.list2.append(4)
+        self.list2.append(6)
+
+        self.list3 = SinglyLinkedList() # Empty list
+
+    def test_false(self):
+        self.assertFalse(self.list1.is_empty())
+        self.assertFalse(self.list2.is_empty())
+
+    def test_true(self):
+        self.assertTrue(self.list3.is_empty())
+
+# Tests that len() compatible with SinglyLinkedList, returning count of nodes.
+class LengthOfList(unittest.TestCase):
+    def setUp(self):
+        self.list1 = SinglyLinkedList() # Count: 1
+        self.list1.append(1)
+
+        self.list2 = SinglyLinkedList() # Count: 3
+        self.list2.append(2)
+        self.list2.append(4)
+        self.list2.append(6)
+
+        self.list3 = SinglyLinkedList() # Count: 0
+
+    def test_length(self):
+        self.assertEqual(len(self.list1), 1)
+        self.assertEqual(len(self.list2), 3)
+        self.assertEqual(len(self.list3), 0)
+
+# Tests str() compatibility for SinglyLinkedList, which relies upon iter() and next().
+# Passing test means both should be functioning properly.
+class StringOutput(unittest.TestCase):
+    def setUp(self):
+        self.list1 = SinglyLinkedList()
+        self.list1.append(1)
+        self.list1.append(2)
+        self.list1.append(4)
+        self.list1.append(8)
+
+        self.list2 = SinglyLinkedList()
+
+    def test_string(self):
+        self.assertEqual(str(self.list1), "Head -> 1 -> 2 -> 4 -> 8 -> None")
+        self.assertEqual(str(self.list2), "Head -> None")
+
+# First, uses the list with build_list_forward() method, then build_list_backward().
+# Tests that string output matches order of input list.
+class BuildingList(unittest.TestCase):
+    def setUp(self):
+        self.input_list = [1, 2, 3, 4, 5]
+        self.list = SinglyLinkedList()
+
+    def test_forward_building(self):
+        self.list.build_list_forward(self.input_list)
+        self.assertEqual(str(self.list), "Head -> 1 -> 2 -> 3 -> 4 -> 5 -> None")
+
+    def test_reverse_building(self):
+        self.list.build_list_backward(self.input_list)
+        self.assertEqual(str(self.list), "Head -> 5 -> 4 -> 3 -> 2 -> 1 -> None")
