@@ -86,3 +86,49 @@ class Insertion(unittest.TestCase):
             self.list2.append(5)
             self.list2.append(10)
             self.list2.insert_after(1, 2)
+
+# Tests remove() method across different cases, both valid and invalid. Test removal of
+# head node, tail node, and interior nodes, as well as error handling when removing from
+# an empty list or a value not present in a list.
+class RemovingNodes(unittest.TestCase):
+    def setUp(self):
+        self.list1 = SinglyLinkedList()
+        self.list1.append(1)
+        self.list1.append(2)
+        self.list1.append(4)
+        self.list1.append(3)
+        self.list1.append(4)
+        self.list1.append(5)
+
+        self.list2 = SinglyLinkedList() # Empty list
+
+    def test_head_removal(self):
+        self.list1.remove(1) # Removes head, making new head 2 (2, 4, 3, 4, 5)
+
+        self.assertEqual(self.list1._head.data, 2)
+        self.assertEqual(self.list1._tail.data, 5)
+        self.assertEqual(self.list1._count, 5)
+
+    def test_tail_removal(self):
+        self.list1.remove(5) # Removes last node, new tail should be 4 (1, 2, 4, 3, 4)
+
+        self.assertEqual(self.list1._head.data, 1)
+        self.assertEqual(self.list1._tail.data, 4)
+        self.assertEqual(self.list1._count, 5)
+
+        self.assertIsNone(self.list1._tail.next) # Checks that tail has no next reference
+
+    def test_interior_removal(self):
+        self.list1.remove(4) # Should remove the first node of value 4 (1, 2, 3, 4, 5)
+
+        self.assertEqual(self.list1._head.data, 1)
+        self.assertEqual(self.list1._head.next.next.data, 3)
+        self.assertEqual(self.list1._tail.data, 5)
+        self.assertEqual(self.list1._count, 5)
+
+    def test_invalid_removal(self):
+        with self.assertRaises(ValueError): # Removing from empty list
+            self.list2.remove(0)
+
+        with self.assertRaises(ValueError): # Removing non-present value
+            self.list1.remove(6)

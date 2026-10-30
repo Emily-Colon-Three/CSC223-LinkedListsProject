@@ -69,3 +69,41 @@ class SinglyLinkedList:
             new_node.next = current.next
             current.next = new_node
             self._count += 1
+
+    # Finds node with data given in parameters, then removed it from SinglyLinkedList.
+    # Contains case handling for if the node is the head, the tail, or an interior node.
+    # Additionally, can handle an error of the list being either empty or lacking target.
+    def remove(self, data):
+        if self._head is None:
+            raise ValueError("SinglyLinkedList is empty.")
+
+        # Checks first if head has target data; removes head if so.
+        if self._head.data == data:
+            if self._head == self._tail: # Case in which node to be removed is only one.
+                self._head = None
+                self._tail = None
+                self._count = 0
+
+                return # method must terminate now that removal is complete
+            else: # For when there is at least one node after head
+                self._head = self._head.next
+                self._count -= 1
+
+                return # Head has been removed, no need for the rest of the instructions
+
+        current = self._head
+
+        # Checks for node after current; head already checked, and removal needs previous node.
+        while current.next.data != data:
+            if current.next == self._tail:
+                raise ValueError("Node with that value does not exist in list.")
+
+            current = current.next
+
+        if current.next == self._tail: # If the node to be removed is tail
+            current.next = None
+            self._tail = current
+            self._count -= 1
+        else: # Node to be removed is an interior node
+            current.next = current.next.next
+            self._count -= 1
