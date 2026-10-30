@@ -194,3 +194,19 @@ class SinglyLinkedList:
     def build_list_backward(self, list):
         for i in list:
             self.append(list[-i])
+
+    def remove_all(self, data) -> int:
+        if self.is_empty():
+            return 0
+
+        current = self._head
+
+        for i in range(self._count):
+            if current.next.data == data:
+                current.next = current.next.next
+
+            current = current.next
+
+        if self._head.data == data:
+            self._head = self._head.next
+        
